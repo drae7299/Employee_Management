@@ -284,3 +284,14 @@ const viewAllRoles = () => {
     }
   );
 };
+
+const viewAllDepartments = () => {
+  connection.query("SELECT * FROM department", (err, res) => {
+    if (err) throw err;
+    console.log(`${res.length} departments found`);
+
+    console.table(res);
+
+    initialize();
+  });
+};
