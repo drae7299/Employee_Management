@@ -203,3 +203,70 @@ const removeEmployee = () => {
       });
   });
 };
+
+const updateEmployeeRole = () => {
+  const query =
+    'SELECT CONCAT(employee.first_name, " ", employee.last_name) AS fullName FROM employee';
+
+  connection.query(query, (err, res) => {
+    let choices = res.map(function (res) {
+      return res["fullName"];
+    });
+
+    connection.query("SELECT role.title FROM role", (err, res) => {
+      let roles = res.map(function (res) {
+        return res["title"];
+      });
+
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "employee",
+            message: "What employee would you like to update?",
+            choices: choices,
+          },
+          {
+            type: "list",
+            name: "role",
+            message: "What do you want to change their role to?",
+            choices: roles,
+          },
+        ])
+        .then((answers) => {
+          connection.query("SELECT * FROM role", (err, res) => {
+            if (err) throw err;
+            const role = res.find((role) => role.title === answers.role);
+
+            connection.query("SELECT * FROM employee", (err, res) => {
+              if (err) throw err;
+              let name = answers.employee.split(" ");
+              const employee = res.find(
+                (employee) =>
+                  employee.first_name === name[0] &&
+                  employee.last_name === name[1]
+              );
+
+              connection.query(
+                "UPDATE employee SET ? WHERE ?",
+                [
+                  {
+                    role_id: role.id,
+                  },
+                  {
+                    id: employee.id,
+                  },
+                ],
+                (err, res) => {
+                  if (err) throw err;
+                  console.log(`${res.affectedRows} employee(s) updated! \n`);
+
+                  initialize();
+                }
+              );
+            });
+          });
+        });
+    });
+  });
+};
