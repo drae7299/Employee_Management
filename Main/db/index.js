@@ -93,3 +93,14 @@ const viewAllEmployees = () => {
     initialize();
   });
 };
+
+const viewEmployeesByDept = () => {
+  const query = 'SELECT department.name, employee.first_name, employee.last_name, employee.id FROM department LEFT JOIN role ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id';
+
+  connection.query(query, (err, res) => {
+      if (err) throw err;
+      console.table(res);
+
+      initialize();
+  })
+}
