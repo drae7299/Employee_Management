@@ -95,12 +95,64 @@ const viewAllEmployees = () => {
 };
 
 const viewEmployeesByDept = () => {
-  const query = 'SELECT department.name, employee.first_name, employee.last_name, employee.id FROM department LEFT JOIN role ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id';
+  const query =
+    "SELECT department.name, employee.first_name, employee.last_name, employee.id FROM department LEFT JOIN role ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id";
 
   connection.query(query, (err, res) => {
-      if (err) throw err;
-      console.table(res);
+    if (err) throw err;
+    console.table(res);
 
-      initialize();
-  })
-}
+    initialize();
+  });
+};
+
+const addEmployee = () => {
+  const query = "SELECT role.title FROM role";
+
+  connection.query(query, (err, res) => {
+    let choices = res.map(function (res) {
+      return res["title"];
+    });
+
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "newFirst",
+          message: "What is the employees first name?",
+        },
+        {
+          type: "input",
+          name: "newLast",
+          message: "What is this employees last name?",
+        },
+        {
+          type: "list",
+          name: "newRole",
+          message: "What is this employees role?",
+          choices: choices,
+        },
+      ])
+      .then((answers) => {
+        connection.query("SELECT * from role", (err, res) => {
+          if (err) throw err;
+          const role = res.find((role) => role.title === answers.newRole);
+
+          connection.query(
+            "INSERT INTO employee SET ?",
+            {
+              first_name: answers.newFirst,
+              last_name: answers.newLast,
+              role_id: role.id,
+            },
+            (err, res) => {
+              if (err) throw err;
+              console.log(`${res.affectedRows} employee(s) inserted! \n`);
+
+              initialize();
+            }
+          );
+        });
+      });
+  });
+};
