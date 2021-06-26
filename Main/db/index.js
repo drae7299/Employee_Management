@@ -347,3 +347,26 @@ const addNewRole = () => {
       });
   });
 };
+
+const addNewDepartment = () => {
+  inquirer
+    .prompt({
+      type: "input",
+      name: "name",
+      message: "What is this new departments name?",
+    })
+    .then((answer) => {
+      connection.query(
+        "INSERT INTO department SET ?",
+        {
+          name: answer.name,
+        },
+        (err, res) => {
+          if (err) throw err;
+          console.log(`${res.affectedRows} department(s) added! \n`);
+
+          initialize();
+        }
+      );
+    });
+};
