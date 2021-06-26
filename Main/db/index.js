@@ -79,3 +79,17 @@ const initialize = () => {
       }
     });
 };
+
+const viewAllEmployees = () => {
+  const query =
+    "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name, employee.manager_ID FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id";
+
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    console.log(`${res.length} employees found`);
+
+    console.table(res);
+
+    initialize();
+  });
+};
