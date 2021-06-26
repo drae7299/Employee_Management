@@ -295,3 +295,55 @@ const viewAllDepartments = () => {
     initialize();
   });
 };
+
+const addNewRole = () => {
+  connection.query("SELECT * FROM department", (err, res) => {
+    if (err) throw err;
+    let choices = res.map(function (res) {
+      return res["name"];
+    });
+
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "title",
+          message: "What is this new role?",
+        },
+        {
+          type: "input",
+          name: "salary",
+          message: "What is this roles salary?",
+        },
+        {
+          type: "list",
+          name: "department",
+          message: "What department is this role in?",
+          choices: choices,
+        },
+      ])
+      .then((answers) => {
+        connection.query("SELECT * FROM department", (err, res) => {
+          if (err) throw err;
+          const department = res.find(
+            (department) => department.name === answers.department
+          );
+
+          connection.query(
+            "INSERT INTO role SET ?",
+            {
+              title: answers.title,
+              salary: answers.salary,
+              department_id: department.id,
+            },
+            (err, res) => {
+              if (err) throw err;
+              console.log(`${res.affectedRows} role(s) added! \n`);
+
+              initialize();
+            }
+          );
+        });
+      });
+  });
+};
