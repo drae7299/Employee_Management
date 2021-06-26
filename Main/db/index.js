@@ -156,3 +156,50 @@ const addEmployee = () => {
       });
   });
 };
+
+const removeEmployee = () => {
+  const query =
+    'SELECT CONCAT(employee.first_name, " ", employee.last_name) AS fullName FROM employee';
+
+  connection.query(query, (err, res) => {
+    let choices = res.map(function (res) {
+      return res["fullName"];
+    });
+
+    inquirer
+      .prompt({
+        type: "list",
+        name: "delete",
+        message: "What employee would you like to remove?",
+        choices: choices,
+      })
+      .then((answers) => {
+        connection.query(
+          "SELECT id, first_name, last_name from employee",
+          (err, res) => {
+            if (err) throw err;
+            let name = answers.delete.split(" ");
+
+            const employee = res.find(
+              (employee) =>
+                employee.first_name === name[0] &&
+                employee.last_name === name[1]
+            );
+
+            connection.query(
+              "DELETE FROM employee WHERE ?",
+              {
+                id: employee.id,
+              },
+              (err, res) => {
+                if (err) throw err;
+                console.log(`${res.affectedRows} employee(s) removed! \n`);
+
+                initialize();
+              }
+            );
+          }
+        );
+      });
+  });
+};
