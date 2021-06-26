@@ -1,0 +1,26 @@
+{
+  "name": "employee_management",
+  "version": "1.0.0",
+  "description": "Employee management node app",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "seed": "node seed.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drae7299/Employee_Management.git"
+  },
+  "author": "Andre Rodriguez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/drae7299/Employee_Management/issues"
+  },
+  "homepage": "https://github.com/drae7299/Employee_Management#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.1.1",
+    "mysql": "^2.18.1"
+  }
+}
