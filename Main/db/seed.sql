@@ -24,3 +24,9 @@ CREATE TABLE employee (
   PRIMARY KEY (id),
   FOREIGN KEY (role_id) REFERENCES role(id)
 );
+INSERT INTO department(name)
+VALUES
+("Sales"),
+("Engineering"),
+("Finance"),
+("Legal");
